@@ -1,6 +1,14 @@
 const app = Vue.createApp({
     data() {
         return {
+            Ipv6Address: null,
+            IPV6AddressCopied: null,
+            ipv6color: null,
+
+            Ipv4Address: null,
+            IPV4AddressCopied: null,
+            ipv4color: null,
+
             PersonalRootDirectoryURL: '',
             PanelLanguage: null,
 
@@ -139,8 +147,8 @@ const app = Vue.createApp({
 
     watch: {
         machine() {
-
-
+            this.loadIpv6()
+            this.loadIpv4()
         },
 
         hasMemoryLiniar() {
@@ -640,6 +648,77 @@ const app = Vue.createApp({
     },
 
     methods: {
+        loadIpv6() {
+            let machineIsLoaded = this.machineIsLoaded;
+            let machine = this.machine;
+            if (machineIsLoaded && machine) {
+                machine.reserves.forEach(reserve => {
+                    const address = reserve.address.address;
+                    if (address.includes(':')) {
+                        this.Ipv6Address = address
+                    }
+                });
+
+            }
+        },
+
+        loadIpv4() {
+            let machineIsLoaded = this.machineIsLoaded;
+            let machine = this.machine;
+            if (machineIsLoaded && machine) {
+                machine.reserves.forEach(reserve => {
+                    const address = reserve.address.address;
+                    if (address.includes('.')) {
+                        this.Ipv4Address = address
+                    }
+                });
+
+            }
+        },
+
+        async CopyIPV6() {
+            this.IPV6AddressCopied = true;
+            let ValueToCopy = null;
+            if (this.Ipv6Address) {
+                ValueToCopy = this.Ipv6Address;
+            } else {
+                ValueToCopy = '';
+            }
+
+            if (ValueToCopy) {
+                try {
+                    await navigator.clipboard.writeText(ValueToCopy);
+                } catch (err) {
+                    console.log('Unable to copy Address to clipboard', err);
+                }
+            }
+
+            setTimeout(() => {
+                this.IPV6AddressCopied = false;
+            }, 1000);
+        },
+
+        async CopyIPV4() {
+            this.IPV4AddressCopied = true;
+            let ValueToCopy = null;
+            if (this.Ipv4Address) {
+                ValueToCopy = this.Ipv4Address;
+            } else {
+                ValueToCopy = '';
+            }
+
+            if (ValueToCopy) {
+                try {
+                    await navigator.clipboard.writeText(ValueToCopy);
+                } catch (err) {
+                    console.log('Unable to copy Address to clipboard', err);
+                }
+            }
+
+            setTimeout(() => {
+                this.IPV4AddressCopied = false;
+            }, 1000);
+        },
 
         changeTimeVisibilty() {
             setTimeout(() => {
