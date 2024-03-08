@@ -305,7 +305,7 @@ function product_CreateAccount($params)
     }
 
     // Send request
-    $response = $controller->sendCreateRequest($poolId, $templateId, $memorySize, $memoryLimit, $diskSize, $cpuCore, $cpuLimit, $name, $email, $publicKey, $traffic, $remaining, $duration, $ipv4, $ipv6);
+    $response = $controller->sendCreateRequest($poolId, $templateId, $memorySize, $memoryLimit, $diskSize, $cpuCore, $cpuLimit, $name, $email, $publicKey, $ipv4, $ipv6);
 
     if (empty($response)) {
 
@@ -320,6 +320,11 @@ function product_CreateAccount($params)
 
     // Machine details
     $machine = $response->data;
+
+    // Add traffic to machine
+    if ($traffic) {
+        $trafficResponse = $controller->sendTrafficRequest($machine->id, $traffic, $remaining, $duration, 'main');
+    }
 
     // Add machine to service
     $params = [
